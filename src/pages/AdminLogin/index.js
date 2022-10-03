@@ -4,7 +4,7 @@ import { useDispatch } from "react-redux";
 import { login } from "../../redux/actions";
 import { useNavigate } from "react-router-dom";
 
-const Login = () => {
+const AdminLogin = () => {
   const dispatch = useDispatch();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -13,7 +13,7 @@ const Login = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
     dispatch(login(email, password));
-    navigation("/");
+    navigation("/admin");
   };
 
   return (
@@ -45,10 +45,7 @@ const Login = () => {
       </div>
       <div className="mb-3">
         <div className="mb-3">
-          Don't have an account? <Link to={"/register"}>Register</Link>
-        </div>
-        <div className="mb-3">
-          Login as admin <Link to={"/admin-login"}>Admin</Link>
+          Not an admin? <Link to={"/login"}>Login</Link>
         </div>
       </div>
       <button type="submit" className="btn btn-primary" onClick={handleSubmit}>
@@ -58,4 +55,4 @@ const Login = () => {
   );
 };
 
-export default Login;
+export default AdminLogin;

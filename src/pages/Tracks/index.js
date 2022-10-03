@@ -23,14 +23,10 @@ const CalorieTracks = () => {
       limitCreator(newObj);
     }
   }
-  useEffect(() => {
-    console.log("selectedDate", selectedDate);
-    console.log("selectedEndDate", selectedEndDate);
-  }, [selectedDate]);
 
   useEffect(() => {
     dispatch(getAllFoods());
-  }, []);
+  }, [selectedDate, selectedEndDate]);
 
   console.log('foods', foods)
   useEffect(() => {
@@ -73,7 +69,7 @@ const CalorieTracks = () => {
         <button
           type="button"
           style={{ width: "20%" }}
-          class="btn btn-sm btn-primary"
+          className="btn btn-sm btn-primary"
           onClick={() => dispatch(getAllFoods(selectedDate, selectedEndDate))}
         >
           search

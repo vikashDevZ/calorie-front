@@ -17,6 +17,7 @@ import { loadUser } from "./redux/actions";
 import AdminComp from "./pages/Admin";
 import User from "./pages/User";
 import Message from "./components/Message";
+import AdminLogin from "./pages/AdminLogin";
 
 function App() {
   const { isAuthenticated } = useSelector((state) => state.user);
@@ -36,6 +37,7 @@ function App() {
         <Routes>
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
+          <Route path="/admin-login" element={<AdminLogin />} />
           <Route element={<ProtectedRoute isAuthenticated={isAuthenticated} />}>
             <Route path="/" element={<CalorieTracks />} />
             <Route path="/me" element={<Profile />} />

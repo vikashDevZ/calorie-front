@@ -198,6 +198,7 @@ export const addFood = (name, calorie, price) => async (dispatch) => {
     );
 
     dispatch({ type: ADD_FOODS_SUCESS, payload: data });
+    dispatch(getAllFoods());
     dispatch({ type: SHOW_WARNING, payload: "Item added Successfully" });
   } catch (err) {
     console.log("err", err);
@@ -207,6 +208,7 @@ export const addFood = (name, calorie, price) => async (dispatch) => {
 };
 
 export const deleteUser = (id) => async (dispatch) => {
+  console.log("id", id);
   try {
     dispatch({ type: DLETED_USER_LOAING });
 
@@ -218,6 +220,7 @@ export const deleteUser = (id) => async (dispatch) => {
     );
 
     dispatch({ type: DLETED_USER_SUCCESS, payload: data });
+    dispatch(getAllUser());
   } catch (error) {
     dispatch({
       type: DLETED_USER_FAIL,

@@ -4,14 +4,13 @@ import Modal from "react-bootstrap/Modal";
 import Form from "react-bootstrap/Form";
 import InputGroup from "react-bootstrap/InputGroup";
 import { Container } from "react-bootstrap";
-import { useDispatch, useSelector } from "react-redux";
-import { addFood, getAllFoods } from "../redux/actions";
-import { SHOW_WARNING } from "../redux/constants";
+import { useDispatch } from "react-redux";
+import { addFood } from "../redux/actions";
 
-const AddItemsForm = () => {
+const AddItemsForm = (props) => {
   const dispatch = useDispatch();
 
-  const [show, setShow] = useState(false);
+  const [show, setShow] = useState();
   const [name, setName] = useState("");
   const [calorie, setCalorie] = useState(0);
   const [price, setPrice] = useState(0);
@@ -27,7 +26,7 @@ const AddItemsForm = () => {
         return { ...prev, name: "name is required" };
       });
     }
-    if (price === "") {
+    if (price === "" || price===null) {
       setError((prev) => {
         return { ...prev, price: "price is required" };
       });
@@ -51,7 +50,9 @@ const AddItemsForm = () => {
       return;
     }
     dispatch(addFood(name, calorie, price));
-    dispatch(getAllFoods());
+    setName("");
+    setPrice(0);
+    setCalorie(0);
     handleClose();
   };
 
@@ -95,6 +96,7 @@ const AddItemsForm = () => {
             <Form.Group className="mb-3">
               <Form.Label>Enter Calorie amount</Form.Label>
               <Form.Control
+                type="number"
                 name="calorie"
                 value={calorie}
                 onChange={(e) => {
@@ -113,6 +115,7 @@ const AddItemsForm = () => {
               <InputGroup.Text>$</InputGroup.Text>
               <Form.Control
                 name="price"
+                type="number"
                 value={price}
                 onChange={(e) => {
                   setPrice(e.target.value);

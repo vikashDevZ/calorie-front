@@ -6,14 +6,15 @@ import { useSelector, useDispatch } from "react-redux";
 import { deleteUser, getAllUser } from "../../redux/actions";
 import { useNavigate } from "react-router-dom";
 import dateSorter from "../../utils/dateSorter";
+import { SHOW_WARNING } from "../../redux/constants";
 
 const AdminComp = () => {
   const { users, loading } = useSelector((state) => state.users);
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
-  let sortedUsers ;
-  
+  let sortedUsers;
+
   if (users.length) {
     sortedUsers = dateSorter(users);
   }
@@ -33,7 +34,7 @@ const AdminComp = () => {
             <th>Name</th>
             <th>Email</th>
             <th>Calorie Limit</th>
-            <th>Creation</th>
+            <th>Created On</th>
             <th>Role</th>
             <th>Actions</th>
           </tr>
@@ -50,7 +51,20 @@ const AdminComp = () => {
                 <td>{item.calorieLimit}</td>
                 <td>{item.localTime}</td>
                 <td>{item.role}</td>
-                <td onClick={() => dispatch(deleteUser(item.id))}>Remove</td>
+                <td
+                  onClick={() => {
+                    if (item.role !== "admin") {
+                      dispatch(deleteUser(item._id));
+                    } else {
+                      dispatch({
+                        type: SHOW_WARNING,
+                        payload: "cannot delete admin",
+                      });
+                    }
+                  }}
+                >
+                  {item.role !== "admin" ? "Delete" : "Admin"}
+                </td>
               </tr>
             ))}
         </tbody>
