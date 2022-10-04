@@ -2,7 +2,7 @@ import {
   CLEAR_DATA,
   DELETE_FOOD_FAIL,
   DELETE_FOOD_SUCCESS,
-  DELETE_FOOD_UPDATE,
+  DELETE_FOOD_LOADING,
   GET_FOODS_DETAILS_FAILED,
   GET_FOODS_DETAILS_LOADING,
   GET_FOODS_DETAILS_SUCESS,
@@ -138,15 +138,15 @@ export const clearErrors = () => async (dispatch) => {
   dispatch({ type: CLEAR_DATA });
 };
 
-export const getAllFoods = (starting, ending) => async (dispatch) => {
-  console.log("starting, ending", starting, ending);
+export const getAllFoods = (page=1, starting, ending) => async (dispatch) => {
+  console.log("starting, ending", starting, ending, page);
   try {
     dispatch({ type: ALL_FOODS_DETAILS_LOADING });
 
-    let url = `${process.env.REACT_APP_API_URL}/api/v1/foods`;
+    let url = `${process.env.REACT_APP_API_URL}/api/v1/foods?page=${page}`;
 
     if (starting && ending) {
-      url = `${process.env.REACT_APP_API_URL}/api/v1/foods?createdAt[gte]=${starting}&createdAt[lte]=${ending}`;
+      url = `${process.env.REACT_APP_API_URL}/api/v1/foods?page=${page}&createdAt[gte]=${starting}&createdAt[lte]=${ending}`;
     }
 
     const { data } = await axios.get(url, {
@@ -204,6 +204,61 @@ export const addFood = (name, calorie, price) => async (dispatch) => {
     console.log("err", err);
     dispatch({ type: SHOW_WARNING, payload: "Failed to add item" });
     dispatch({ type: ADD_FOODS_FAILED, payload: err.response.data.message });
+  }
+};
+
+export const updateFoodDetails = (id, foodData) => async (dispatch) => {
+  try {
+    dispatch({ type: UPDATE_FOOD_DETAILS_LOADING });
+
+    const config = {
+      withCredentials: true,
+      headers: { "Content-Type": "application/json" },
+    };
+
+    const { data } = await axios.patch(
+      `${process.env.REACT_APP_API_URL}/api/v1/foods/${id}`,
+      foodData,
+      config
+    );
+
+    dispatch({ type: UPDATE_FOOD_DETAILS_SUCESS, payload: data });
+    dispatch(getAllFoods());
+    dispatch({ type: SHOW_WARNING, payload: "Item added Successfully" });
+  } catch (err) {
+    console.log("err", err);
+    dispatch({ type: SHOW_WARNING, payload: "Failed to add item" });
+    dispatch({
+      type: UPDATE_FOOD_DETAILS_FAILED,
+      payload: err.response.data.message,
+    });
+  }
+};
+
+export const deleteFood = (foodId, userId) => async (dispatch) => {
+  try {
+    dispatch({ type: DELETE_FOOD_LOADING });
+
+    const config = {
+      withCredentials: true,
+      headers: { "Content-Type": "application/json" },
+    };
+
+    const { data } = await axios.delete(
+      `${process.env.REACT_APP_API_URL}/api/v1/foods/${foodId}`,
+      config
+    );
+
+    dispatch({ type: DELETE_FOOD_SUCCESS, payload: data });
+    dispatch(getFoodDetailsByUserId(userId));
+    dispatch({ type: SHOW_WARNING, payload: "Item deleted Successfully" });
+  } catch (err) {
+    console.log("err", err);
+    dispatch({ type: SHOW_WARNING, payload: "Failed to delte item" });
+    dispatch({
+      type: DELETE_FOOD_FAIL,
+      payload: err.response.data.message,
+    });
   }
 };
 

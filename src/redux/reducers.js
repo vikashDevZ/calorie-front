@@ -8,7 +8,6 @@ import {
   CLEAR_DATA,
   DELETE_FOOD_FAIL,
   DELETE_FOOD_SUCCESS,
-  DELETE_FOOD_UPDATE,
   GET_FOODS_DETAILS_FAILED,
   GET_FOODS_DETAILS_LOADING,
   GET_FOODS_DETAILS_SUCESS,
@@ -40,6 +39,7 @@ import {
   SEND_FRIENDS_LOADING,
   SEND_FRIENDS_SUCCESS,
   SEND_FRIENDS_FAIL,
+  DELETE_FOOD_LOADING,
 } from "./constants";
 
 const userInitialState = {
@@ -181,6 +181,69 @@ export const foodDetailsReducer = (state = foodDetailsInitialState, action) => {
       return {
         ...state,
         error: null,
+      };
+    default:
+      return state;
+  }
+};
+
+const newFoodUpdatedInitialState = {
+  loading: false,
+  food: null,
+  error: null,
+};
+
+export const foodUpdateReducer = (
+  state = newFoodUpdatedInitialState,
+  action
+) => {
+  switch (action.type) {
+    case UPDATE_FOOD_DETAILS_LOADING:
+      return {
+        ...state,
+        loading: true,
+      };
+    case UPDATE_FOOD_DETAILS_SUCESS:
+      return {
+        ...state,
+        foods: action.payload,
+        loading: false,
+      };
+    case UPDATE_FOOD_DETAILS_FAILED:
+      return {
+        ...state,
+        error: action.payload,
+        loading: false,
+      };
+    default:
+      return state;
+  }
+};
+
+const deleteFoodInitialState = {
+  loading: false,
+  food: null,
+  error: null,
+};
+
+export const deleteFoodReducer = (state = deleteFoodInitialState, action) => {
+  switch (action.type) {
+    case DELETE_FOOD_LOADING:
+      return {
+        ...state,
+        loading: true,
+      };
+    case DELETE_FOOD_SUCCESS:
+      return {
+        ...state,
+        foods: action.payload,
+        loading: false,
+      };
+    case DELETE_FOOD_FAIL:
+      return {
+        ...state,
+        error: action.payload,
+        loading: false,
       };
     default:
       return state;

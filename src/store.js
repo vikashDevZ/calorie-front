@@ -16,6 +16,8 @@ import {
   getFoodByUserId,
   warningReducer,
   inviteReducer,
+  foodUpdateReducer,
+  deleteFoodReducer,
 } from "./redux/reducers";
 
 const reducer = combineReducers({
@@ -28,6 +30,8 @@ const reducer = combineReducers({
   foodId: getFoodByUserId,
   warn: warningReducer,
   invite: inviteReducer,
+  updatedFood: foodUpdateReducer,
+  deleteFood: deleteFoodReducer,
 });
 
 let initialState = {

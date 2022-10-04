@@ -12,6 +12,7 @@ import ReactDatePicker from "react-datepicker";
 
 const CalorieTracks = () => {
   const [selectedDate, setSelectedDate] = useState(null);
+  const [currPage, setCurrPage] = useState(1);
   const [selectedEndDate, setSelectedEndDate] = useState(null);
   const dispatch = useDispatch();
   const { foods, loading, error } = useSelector((state) => state.foods);
@@ -24,11 +25,23 @@ const CalorieTracks = () => {
     }
   }
 
+  const handlePagination = (action) => {
+    if (action === "inc") {
+      dispatch(getAllFoods(currPage + 1));
+      setCurrPage((prev) => prev + 1);
+    } else if (action === "dec") {
+      if (currPage <= 1) return;
+      dispatch(getAllFoods(currPage - 1));
+      setCurrPage((prev) => prev - 1);
+    } else return;
+  };
+
   useEffect(() => {
     dispatch(getAllFoods());
   }, [selectedDate, selectedEndDate]);
 
-  console.log('foods', foods)
+  console.log("foods", foods);
+
   useEffect(() => {
     if (foods.length) {
       const todaysDate = new Date(Date.now());
@@ -48,7 +61,10 @@ const CalorieTracks = () => {
   if (loading) return <Loader />;
 
   return (
-    <Container style={{ padding: "1rem" }}>
+    <Container
+      style={{ padding: "1rem" }}
+      className="d-flex flex-column justify-content-center align-items-end"
+    >
       <div className="d-flex align-items-center justify-content-end">
         <div className="container row pb-4">
           <div className="col-5 p-0">
@@ -66,11 +82,14 @@ const CalorieTracks = () => {
             />
           </div>
         </div>
+
         <button
           type="button"
           style={{ width: "20%" }}
           className="btn btn-sm btn-primary"
-          onClick={() => dispatch(getAllFoods(selectedDate, selectedEndDate))}
+          onClick={() =>
+            dispatch(getAllFoods(currPage, selectedDate, selectedEndDate))
+          }
         >
           search
         </button>
@@ -118,6 +137,29 @@ const CalorieTracks = () => {
           {/* <td colSpan={2}>Larry the Bird</td> */}
         </tbody>
       </Table>
+      <div className="btn-group mx-4" role="group" aria-label="Basic example">
+        <button
+          type="button"
+          className="btn btn-sm btn-primary px-4"
+          onClick={() => handlePagination("dec")}
+        >
+          {"<"}
+        </button>
+        <button
+          type="button"
+          style={{ cursor: "not-allowed" }}
+          className="btn active btn-sm btn-primary px-4"
+        >
+          {currPage}
+        </button>
+        <button
+          type="button"
+          className="btn btn-sm btn-primary px-4"
+          onClick={() => handlePagination("inc")}
+        >
+          {">"}
+        </button>
+      </div>
     </Container>
   );
 };

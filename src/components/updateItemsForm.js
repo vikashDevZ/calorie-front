@@ -5,15 +5,16 @@ import Form from "react-bootstrap/Form";
 import InputGroup from "react-bootstrap/InputGroup";
 import { Container } from "react-bootstrap";
 import { useDispatch } from "react-redux";
-import { addFood } from "../redux/actions";
+import { addFood, updateFoodDetails } from "../redux/actions";
 
-const AddItemsForm = () => {
+const AddItemsForm = (props) => {
   const dispatch = useDispatch();
+  console.log("props", props);
 
   const [show, setShow] = useState();
-  const [name, setName] = useState("");
-  const [calorie, setCalorie] = useState(0);
-  const [price, setPrice] = useState(0);
+  const [name, setName] = useState(props.name);
+  const [calorie, setCalorie] = useState(props.calorie);
+  const [price, setPrice] = useState(props.price);
   const [error, setError] = useState({});
 
   const handleClose = () => setShow(false);
@@ -26,12 +27,12 @@ const AddItemsForm = () => {
         return { ...prev, name: "name is required" };
       });
     }
-    if (price === "" || price===null) {
+    if (price === "" || price === null) {
       setError((prev) => {
         return { ...prev, price: "price is required" };
       });
     }
-    if (calorie === "") {
+    if (calorie === "" || calorie === null) {
       setError((prev) => {
         return { ...prev, calorie: "calorie is required" };
       });
@@ -39,22 +40,19 @@ const AddItemsForm = () => {
     if (name === "" || price === "" || calorie === "") {
       return;
     }
-    dispatch(addFood(name, calorie, price));
-    setName("");
-    setPrice(0);
-    setCalorie(0);
-    handleClose();
+    dispatch(updateFoodDetails(props.id, { name, calorie, price }));
   };
 
   return (
     <Container
+      className="btn"
       onKeyDown={(e) => e.stopPropagation()}
       onClick={(e) => e.stopPropagation()}
       onFocus={(e) => e.stopPropagation()}
       onMouseOver={(e) => e.stopPropagation()}
     >
       <Button variant="primary" onClick={handleShow}>
-        Add Item
+        Update
       </Button>
 
       <Modal show={show} onHide={handleClose}>

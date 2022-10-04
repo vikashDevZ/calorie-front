@@ -1,30 +1,24 @@
 import React, { useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { getUserById } from "../../redux/actions";
+import { deleteFood, getUserById } from "../../redux/actions";
 import Loader from "../../components/Loader/Loader";
 import { getFoodDetailsByUserId } from "../../redux/actions";
-import AddItemsForm from "../../components/AddItemsForm";
+import UpdateItemsForm from "../../components/updateItemsForm";
 
 const User = () => {
   const { id } = useParams();
   console.log("id", id);
   const dispatch = useDispatch();
-  const { loading, user, error } = useSelector((state) => state.userId);
-  const { foods } = useSelector((state) => state.foodId);
+  const { loading } = useSelector((state) => state.deleteFood);
+  const { loading: foodLoading, foods } = useSelector((state) => state.foodId);
 
   useEffect(() => {
     dispatch(getUserById(id));
     dispatch(getFoodDetailsByUserId(id));
   }, [id]);
 
-  const foodUpdateHandler = (id) => {
-    return <AddItemsForm />;
-  };
-
-  const deleteFood = (id) => {};
-
-  if (loading) return <Loader />;
+  if (loading || foodLoading) return <Loader />;
 
   return (
     <>
@@ -37,16 +31,21 @@ const User = () => {
               <li className="list-group-item">{item.price}</li>
               <li className="list-group-item">{item.createdAt}</li>
             </ul>
-            <div>
+            <div className="">
               <button
-                onClick={() => foodUpdateHandler(item._id)}
+                // onClick={() => foodUpdateHandler(item._id)}
                 className="btn"
                 // className="btn btn-primary mx-4"
               >
-                <AddItemsForm/>
+                <UpdateItemsForm
+                  name={item.name}
+                  calorie={item.calorie}
+                  price={item.price}
+                  id={item._id}
+                />
               </button>
               <button
-                onClick={() => deleteFood(item._id)}
+                onClick={() => dispatch(deleteFood(item._id, id))}
                 className="btn btn-danger"
               >
                 delete
