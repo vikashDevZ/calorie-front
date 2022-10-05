@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from "react";
-import Button from "@mui/material/Button";
 import Snackbar from "@mui/material/Snackbar";
 import Slide from "@mui/material/Slide";
 import { useSelector, useDispatch } from "react-redux";
@@ -12,21 +11,17 @@ function SlideTransition(props) {
 export default function TransitionsSnackbar() {
   const { notify, message } = useSelector((state) => state.warn);
   const dispatch = useDispatch();
-  const [state, setState] = React.useState({
+  const [state, setState] = useState({
     open: false,
     Transition: Slide,
   });
 
-  let TIMER;
-  function handleTimeout() {
-    TIMER = setTimeout(() => {
-      dispatch({ type: CLEAR_WARNING });
-    }, 2000);
-  }
-
   useEffect(() => {
+    let TIMER;
     if (notify) {
-      handleTimeout();
+      TIMER = setTimeout(() => {
+        dispatch({ type: CLEAR_WARNING });
+      }, 2000);
       setState({
         open: true,
         Transition: SlideTransition,
@@ -35,7 +30,7 @@ export default function TransitionsSnackbar() {
     return () => {
       clearTimeout(TIMER);
     };
-  }, [notify]);
+  }, [notify, dispatch]);
 
   const handleClose = () => {
     setState({

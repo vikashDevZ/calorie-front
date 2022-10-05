@@ -1,20 +1,20 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import Button from "react-bootstrap/Button";
 import Modal from "react-bootstrap/Modal";
 import Form from "react-bootstrap/Form";
 import InputGroup from "react-bootstrap/InputGroup";
 import { Container } from "react-bootstrap";
 import { useDispatch } from "react-redux";
-import { addFood, updateFoodDetails } from "../redux/actions";
+import { addFoodForUser, updateFoodDetails } from "../redux/actions";
 
-const AddItemsForm = (props) => {
+const UpdateItemsForm = (props) => {
   const dispatch = useDispatch();
   console.log("props", props);
 
   const [show, setShow] = useState();
-  const [name, setName] = useState(props.name);
-  const [calorie, setCalorie] = useState(props.calorie);
-  const [price, setPrice] = useState(props.price);
+  const [name, setName] = useState(props.name || "");
+  const [calorie, setCalorie] = useState(props.calorie || 0);
+  const [price, setPrice] = useState(props.price || 0);
   const [error, setError] = useState({});
 
   const handleClose = () => setShow(false);
@@ -40,19 +40,29 @@ const AddItemsForm = (props) => {
     if (name === "" || price === "" || calorie === "") {
       return;
     }
-    dispatch(updateFoodDetails(props.id, { name, calorie, price }));
+    if (props.type === "Update") {
+      dispatch(
+        updateFoodDetails(props.id, { name, calorie, price }, props.userId)
+      );
+    } else {
+      dispatch(addFoodForUser(props.userId, name, Number(calorie), Number(price)));
+    }
+    setName("");
+    setPrice(0);
+    setCalorie(0);
+    handleClose();
   };
 
   return (
     <Container
-      className="btn"
+      className="d-flex justify-content-end"
       onKeyDown={(e) => e.stopPropagation()}
       onClick={(e) => e.stopPropagation()}
       onFocus={(e) => e.stopPropagation()}
       onMouseOver={(e) => e.stopPropagation()}
     >
       <Button variant="primary" onClick={handleShow}>
-        Update
+        {props.type}
       </Button>
 
       <Modal show={show} onHide={handleClose}>
@@ -127,4 +137,4 @@ const AddItemsForm = (props) => {
   );
 };
 
-export default AddItemsForm;
+export default UpdateItemsForm;

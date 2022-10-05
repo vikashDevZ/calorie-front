@@ -40,8 +40,6 @@ const CalorieTracks = () => {
     dispatch(getAllFoods());
   }, [selectedDate, selectedEndDate]);
 
-  console.log("foods", foods);
-
   useEffect(() => {
     if (foods.length) {
       const todaysDate = new Date(Date.now());

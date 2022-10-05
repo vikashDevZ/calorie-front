@@ -5,7 +5,6 @@ import Navbar from "react-bootstrap/Navbar";
 import { useSelector, useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import AddItemsForm from "./AddItemsForm";
-import { Link } from "react-router-dom";
 import { logOut } from "../redux/actions";
 import InviteFriends from "./InviteFriendsForm";
 import Loader from "./Loader/Loader";

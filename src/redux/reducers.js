@@ -40,6 +40,9 @@ import {
   SEND_FRIENDS_SUCCESS,
   SEND_FRIENDS_FAIL,
   DELETE_FOOD_LOADING,
+  ADD_FOOD_FOR_USER_LOADING,
+  ADD_FOOD_FOR_USER_SUCESS,
+  ADD_FOOD_FOR_USER_FAILED,
 } from "./constants";
 
 const userInitialState = {
@@ -210,6 +213,36 @@ export const foodUpdateReducer = (
         loading: false,
       };
     case UPDATE_FOOD_DETAILS_FAILED:
+      return {
+        ...state,
+        error: action.payload,
+        loading: false,
+      };
+    default:
+      return state;
+  }
+};
+
+const addUserFoodInitialState = {
+  loading: false,
+  food: null,
+  error: null,
+};
+
+export const addUserFoodReducer = (state = addUserFoodInitialState, action) => {
+  switch (action.type) {
+    case ADD_FOOD_FOR_USER_LOADING:
+      return {
+        ...state,
+        loading: true,
+      };
+    case ADD_FOOD_FOR_USER_SUCESS:
+      return {
+        ...state,
+        food: action.payload,
+        loading: false,
+      };
+    case ADD_FOOD_FOR_USER_FAILED:
       return {
         ...state,
         error: action.payload,

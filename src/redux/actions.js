@@ -41,23 +41,26 @@ import {
   SEND_FRIENDS_SUCCESS,
   SEND_FRIENDS_FAIL,
   SHOW_WARNING,
+  ADD_FOOD_FOR_USER_LOADING,
+  ADD_FOOD_FOR_USER_SUCESS,
+  ADD_FOOD_FOR_USER_FAILED,
 } from "./constants";
 import axios from "axios";
+
+const app_jsonConfig = {
+  withCredentials: true,
+  headers: { "Content-Type": "application/json" },
+};
 
 export const login = (email, password) => async (dispatch) => {
   console.log("email,password", email, password);
   try {
     dispatch({ type: USER_LOGIN_LOADING });
 
-    const config = {
-      withCredentials: true,
-      headers: { "Content-Type": "application/json" },
-    };
-
     const { data } = await axios.post(
       `${process.env.REACT_APP_API_URL}/api/v1/user/login`,
       { email, password },
-      config
+      app_jsonConfig
     );
 
     dispatch({ type: USER_LOGIN_SUCCESS, payload: data });
@@ -73,15 +76,10 @@ export const register = (name, email, password, limit) => async (dispatch) => {
   try {
     dispatch({ type: USER_REGISTER_LOADING });
 
-    const config = {
-      withCredentials: true,
-      headers: { "Content-Type": "application/json" },
-    };
-
     const { data } = await axios.post(
       `${process.env.REACT_APP_API_URL}/api/v1/user/register`,
       { name, email, password },
-      config
+      app_jsonConfig
     );
 
     console.log("data", data);
@@ -138,31 +136,32 @@ export const clearErrors = () => async (dispatch) => {
   dispatch({ type: CLEAR_DATA });
 };
 
-export const getAllFoods = (page=1, starting, ending) => async (dispatch) => {
-  console.log("starting, ending", starting, ending, page);
-  try {
-    dispatch({ type: ALL_FOODS_DETAILS_LOADING });
+export const getAllFoods =
+  (page = 1, starting, ending) =>
+  async (dispatch) => {
+    try {
+      dispatch({ type: ALL_FOODS_DETAILS_LOADING });
 
-    let url = `${process.env.REACT_APP_API_URL}/api/v1/foods?page=${page}`;
+      let url = `${process.env.REACT_APP_API_URL}/api/v1/foods?page=${page}`;
 
-    if (starting && ending) {
-      url = `${process.env.REACT_APP_API_URL}/api/v1/foods?page=${page}&createdAt[gte]=${starting}&createdAt[lte]=${ending}`;
+      if (starting && ending) {
+        url = `${process.env.REACT_APP_API_URL}/api/v1/foods?page=${page}&createdAt[gte]=${starting}&createdAt[lte]=${ending}`;
+      }
+
+      const { data } = await axios.get(url, {
+        withCredentials: true,
+        headers: { "Content-Type": "application/json" },
+      });
+
+      dispatch({ type: ALL_FOODS_DETAILS_SUCESS, payload: data });
+    } catch (err) {
+      console.log("err", err);
+      dispatch({
+        type: ALL_FOODS_DETAILS_FAILED,
+        payload: err.response.data.message,
+      });
     }
-
-    const { data } = await axios.get(url, {
-      withCredentials: true,
-      headers: { "Content-Type": "application/json" },
-    });
-
-    dispatch({ type: ALL_FOODS_DETAILS_SUCESS, payload: data });
-  } catch (err) {
-    console.log("err", err);
-    dispatch({
-      type: ALL_FOODS_DETAILS_FAILED,
-      payload: err.response.data.message,
-    });
-  }
-};
+  };
 
 export const getFoodDetails = (id) => async (dispatch) => {
   try {
@@ -186,15 +185,10 @@ export const addFood = (name, calorie, price) => async (dispatch) => {
   try {
     dispatch({ type: ADD_FOODS_LOADING });
 
-    const config = {
-      withCredentials: true,
-      headers: { "Content-Type": "application/json" },
-    };
-
     const { data } = await axios.post(
       `${process.env.REACT_APP_API_URL}/api/v1/foods`,
       { calorie, name, price },
-      config
+      app_jsonConfig
     );
 
     dispatch({ type: ADD_FOODS_SUCESS, payload: data });
@@ -207,27 +201,22 @@ export const addFood = (name, calorie, price) => async (dispatch) => {
   }
 };
 
-export const updateFoodDetails = (id, foodData) => async (dispatch) => {
+export const updateFoodDetails = (id, foodData, userId) => async (dispatch) => {
   try {
     dispatch({ type: UPDATE_FOOD_DETAILS_LOADING });
-
-    const config = {
-      withCredentials: true,
-      headers: { "Content-Type": "application/json" },
-    };
 
     const { data } = await axios.patch(
       `${process.env.REACT_APP_API_URL}/api/v1/foods/${id}`,
       foodData,
-      config
+      app_jsonConfig
     );
 
     dispatch({ type: UPDATE_FOOD_DETAILS_SUCESS, payload: data });
-    dispatch(getAllFoods());
-    dispatch({ type: SHOW_WARNING, payload: "Item added Successfully" });
+    dispatch(getFoodDetailsByUserId(userId));
+    dispatch({ type: SHOW_WARNING, payload: "Item updated Successfully" });
   } catch (err) {
     console.log("err", err);
-    dispatch({ type: SHOW_WARNING, payload: "Failed to add item" });
+    dispatch({ type: SHOW_WARNING, payload: "Failed to update item" });
     dispatch({
       type: UPDATE_FOOD_DETAILS_FAILED,
       payload: err.response.data.message,
@@ -235,18 +224,44 @@ export const updateFoodDetails = (id, foodData) => async (dispatch) => {
   }
 };
 
+export const addFoodForUser =
+  (userId, name, calorie, price) => async (dispatch) => {
+    console.log(
+      "userId, calorie, name, price",
+      typeof userId,
+      typeof calorie,
+      typeof name,
+      typeof price
+    );
+    try {
+      dispatch({ type: ADD_FOOD_FOR_USER_LOADING });
+
+      const { data } = await axios.post(
+        `${process.env.REACT_APP_API_URL}/api/v1/user/admin/food`,
+        { userId, calorie, name, price },
+        app_jsonConfig
+      );
+
+      dispatch({ type: ADD_FOOD_FOR_USER_SUCESS, payload: data });
+      dispatch(getFoodDetailsByUserId(userId));
+      dispatch({ type: SHOW_WARNING, payload: "Item added Successfully" });
+    } catch (err) {
+      console.log("err", err);
+      dispatch({ type: SHOW_WARNING, payload: "Failed to add user item" });
+      dispatch({
+        type: ADD_FOOD_FOR_USER_FAILED,
+        payload: err.response.data.message,
+      });
+    }
+  };
+
 export const deleteFood = (foodId, userId) => async (dispatch) => {
   try {
     dispatch({ type: DELETE_FOOD_LOADING });
 
-    const config = {
-      withCredentials: true,
-      headers: { "Content-Type": "application/json" },
-    };
-
     const { data } = await axios.delete(
       `${process.env.REACT_APP_API_URL}/api/v1/foods/${foodId}`,
-      config
+      app_jsonConfig
     );
 
     dispatch({ type: DELETE_FOOD_SUCCESS, payload: data });
