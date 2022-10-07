@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import Table from "react-bootstrap/Table";
-import { Button, Container } from "react-bootstrap";
+import { Container } from "react-bootstrap";
 import { useSelector, useDispatch } from "react-redux";
 import { getAllFoods } from "../../redux/actions";
 import Loader from "../../components/Loader/Loader";
@@ -27,18 +27,18 @@ const CalorieTracks = () => {
 
   const handlePagination = (action) => {
     if (action === "inc") {
-      dispatch(getAllFoods(currPage + 1));
+      dispatch(getAllFoods(currPage + 1, selectedDate, selectedEndDate));
       setCurrPage((prev) => prev + 1);
     } else if (action === "dec") {
       if (currPage <= 1) return;
-      dispatch(getAllFoods(currPage - 1));
+      dispatch(getAllFoods(currPage - 1, selectedDate, selectedEndDate));
       setCurrPage((prev) => prev - 1);
     } else return;
   };
 
   useEffect(() => {
     dispatch(getAllFoods());
-  }, [selectedDate, selectedEndDate]);
+  }, [selectedDate, selectedEndDate, dispatch]);
 
   useEffect(() => {
     if (foods.length) {
@@ -54,7 +54,11 @@ const CalorieTracks = () => {
         }
       });
     }
-  }, [foods.length]);
+
+    if (error) {
+      dispatch({ type: SHOW_WARNING, payload: error });
+    }
+  }, [foods, error, dispatch]);
 
   if (loading) return <Loader />;
 
@@ -132,7 +136,6 @@ const CalorieTracks = () => {
                 </td>
               </tr>
             ))}
-          {/* <td colSpan={2}>Larry the Bird</td> */}
         </tbody>
       </Table>
       <div className="btn-group mx-4" role="group" aria-label="Basic example">
@@ -163,6 +166,3 @@ const CalorieTracks = () => {
 };
 
 export default CalorieTracks;
-{
-  /* <div className="vr" /> */
-}

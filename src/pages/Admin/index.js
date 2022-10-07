@@ -21,7 +21,7 @@ const AdminComp = () => {
 
   useEffect(() => {
     dispatch(getAllUser());
-  }, []);
+  }, [dispatch]);
 
   if (loading) return <Loader />;
 
@@ -42,9 +42,12 @@ const AdminComp = () => {
         <tbody>
           {sortedUsers &&
             sortedUsers.map((item, i) => (
-              <tr>
+              <tr key={i}>
                 <td>{i}</td>
-                <td onClick={() => navigate(`/user/${item._id}`)}>
+                <td
+                  style={{ cursor: "pointer" }}
+                  onClick={() => navigate(`/user/${item._id}`)}
+                >
                   {item.name}
                 </td>
                 <td>{item.email}</td>

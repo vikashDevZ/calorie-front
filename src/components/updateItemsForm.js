@@ -54,8 +54,8 @@ const UpdateItemsForm = (props) => {
   };
 
   return (
-    <Container
-      className="d-flex justify-content-end"
+    <div
+      className="d-flex justify-content-start"
       onKeyDown={(e) => e.stopPropagation()}
       onClick={(e) => e.stopPropagation()}
       onFocus={(e) => e.stopPropagation()}
@@ -133,7 +133,7 @@ const UpdateItemsForm = (props) => {
           </Form>
         </Modal.Body>
       </Modal>
-    </Container>
+    </div>
   );
 };
 

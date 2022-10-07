@@ -68,7 +68,10 @@ export const login = (email, password) => async (dispatch) => {
   } catch (err) {
     console.log("err", err);
     dispatch({ type: USER_LOGIN_FAIL, payload: err.response.data.message });
-    dispatch({ type: SHOW_WARNING, payload: "logged in failed" });
+    dispatch({
+      type: SHOW_WARNING,
+      payload: err.response.data.message || "failed to Login user",
+    });
   }
 };
 
@@ -87,6 +90,10 @@ export const register = (name, email, password, limit) => async (dispatch) => {
   } catch (err) {
     console.log("err", err);
     dispatch({ type: USER_REGISTER_FAIL, payload: err.response.data.message });
+    dispatch({
+      type: SHOW_WARNING,
+      payload: err.response.data.message || "failed to Register user",
+    });
   }
 };
 
@@ -126,6 +133,10 @@ export const logOut = () => async (dispatch) => {
     }
 
     dispatch({ type: LOGOUT_SUCCESS });
+    dispatch({
+      type: SHOW_WARNING,
+      payload: "logged out successfully",
+    });
   } catch (err) {
     console.log("err", err);
     dispatch({ type: LOGOUT_FAIL, payload: err.response.data.message });
@@ -185,13 +196,13 @@ export const addFood = (name, calorie, price) => async (dispatch) => {
   try {
     dispatch({ type: ADD_FOODS_LOADING });
 
-    const { data } = await axios.post(
+    const all = await axios.post(
       `${process.env.REACT_APP_API_URL}/api/v1/foods`,
       { calorie, name, price },
       app_jsonConfig
     );
 
-    dispatch({ type: ADD_FOODS_SUCESS, payload: data });
+    dispatch({ type: ADD_FOODS_SUCESS, payload: all.data });
     dispatch(getAllFoods());
     dispatch({ type: SHOW_WARNING, payload: "Item added Successfully" });
   } catch (err) {
@@ -226,13 +237,6 @@ export const updateFoodDetails = (id, foodData, userId) => async (dispatch) => {
 
 export const addFoodForUser =
   (userId, name, calorie, price) => async (dispatch) => {
-    console.log(
-      "userId, calorie, name, price",
-      typeof userId,
-      typeof calorie,
-      typeof name,
-      typeof price
-    );
     try {
       dispatch({ type: ADD_FOOD_FOR_USER_LOADING });
 
@@ -338,26 +342,32 @@ export const getUserById = (id) => async (dispatch) => {
   }
 };
 
-export const getFoodDetailsByUserId = (id) => async (dispatch) => {
-  try {
-    dispatch({ type: GET_FOODS_BY_USERID_LOADING });
+export const getFoodDetailsByUserId =
+  (id, page = 1, startDate, endDate) =>
+  async (dispatch) => {
+    console.log("id, page, startDate, endDate", id, page, startDate, endDate);
+    try {
+      dispatch({ type: GET_FOODS_BY_USERID_LOADING });
 
-    const { data } = await axios.get(
-      `${process.env.REACT_APP_API_URL}/api/v1/foods/admin/${id}`,
-      {
-        withCredentials: true,
+      let url = `${process.env.REACT_APP_API_URL}/api/v1/foods/admin/${id}?page=${page}`;
+
+      if (startDate && endDate) {
+        url = `${process.env.REACT_APP_API_URL}/api/v1/foods/admin/${id}?page=${page}&createdAt[gte]=${startDate}&createdAt[lte]=${endDate}`;
       }
-    );
 
-    dispatch({ type: GET_FOODS_BY_USERID_SUCCESS, payload: data.foods });
-  } catch (err) {
-    console.log("err", err);
-    dispatch({
-      type: GET_FOODS_DETAILS_FAILED,
-      payload: err.response.data.message,
-    });
-  }
-};
+      const { data } = await axios.get(url, {
+        withCredentials: true,
+      });
+
+      dispatch({ type: GET_FOODS_BY_USERID_SUCCESS, payload: data.foods });
+    } catch (err) {
+      console.log("err", err);
+      dispatch({
+        type: GET_FOODS_DETAILS_FAILED,
+        payload: err.response.data.message,
+      });
+    }
+  };
 
 export const inviteFriends = (name, email) => async (dispatch) => {
   try {
