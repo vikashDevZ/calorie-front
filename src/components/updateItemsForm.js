@@ -9,7 +9,6 @@ import { addFoodForUser, updateFoodDetails } from "../redux/actions";
 
 const UpdateItemsForm = (props) => {
   const dispatch = useDispatch();
-  console.log("props", props);
 
   const [show, setShow] = useState();
   const [name, setName] = useState(props.name || "");

@@ -1,5 +1,5 @@
 import "./App.css";
-import "react-datepicker/dist/react-datepicker.css"
+import "react-datepicker/dist/react-datepicker.css";
 import { useEffect } from "react";
 import { ThemeProvider } from "react-bootstrap";
 import CalorieTracks from "./pages/Tracks";
@@ -18,6 +18,7 @@ import AdminComp from "./pages/Admin";
 import User from "./pages/User";
 import Message from "./components/Message";
 import AdminLogin from "./pages/AdminLogin";
+import Reports from "./pages/Reports";
 
 function App() {
   const { isAuthenticated } = useSelector((state) => state.user);
@@ -43,6 +44,7 @@ function App() {
             <Route path="/me" element={<Profile />} />
             <Route path="/admin" element={<AdminComp />} />
             <Route path="/user/:id" element={<User />} />
+            <Route path="/admin/report/:userId" element={<Reports />} />
           </Route>
         </Routes>
       </Router>

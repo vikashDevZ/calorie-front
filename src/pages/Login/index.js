@@ -6,12 +6,10 @@ import { useNavigate } from "react-router-dom";
 
 const Login = () => {
   const dispatch = useDispatch();
-  const { error: serverError } = useSelector((state) => state.user);
   const navigation = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState({});
-  console.log("serverError", serverError);
 
   const handleSubmit = (e) => {
     e.preventDefault();

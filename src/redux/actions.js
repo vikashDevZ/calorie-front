@@ -345,7 +345,6 @@ export const getUserById = (id) => async (dispatch) => {
 export const getFoodDetailsByUserId =
   (id, page = 1, startDate, endDate) =>
   async (dispatch) => {
-    console.log("id, page, startDate, endDate", id, page, startDate, endDate);
     try {
       dispatch({ type: GET_FOODS_BY_USERID_LOADING });
 

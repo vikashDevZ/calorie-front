@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { deleteFood, getUserById } from "../../redux/actions";
 import Loader from "../../components/Loader/Loader";
@@ -39,6 +39,9 @@ const User = () => {
   return (
     <div className="container mb-4">
       <div className="d-flex flex-column justify-content-end align-items-end">
+        <Link to={`/admin/report/${id}`} className="my-2">
+          user reports
+        </Link>
         <UpdateItemsForm type={"Add New Item For User"} userId={id} />
         <div className="d-flex align-items-center justify-content-end mx-4">
           <div className="container row pb-4">
@@ -81,8 +84,8 @@ const User = () => {
           <div className="my-4" key={i}>
             <ul className="list-group">
               <li className="list-group-item">{item.name}</li>
-              <li className="list-group-item">{item.calorie}</li>
-              <li className="list-group-item">{item.price}</li>
+              <li className="list-group-item">{item.calorie}cal</li>
+              <li className="list-group-item">${item.price}</li>
               <li className="list-group-item">
                 {new Date(item.createdAt).toUTCString().slice(0, 16)}
                 {new Date(item.createdAt).toTimeString()}

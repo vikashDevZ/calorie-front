@@ -23,7 +23,7 @@ const InviteFriends = () => {
         return { ...prev, name: "name is required" };
       });
     }
-    if (!email === "") {
+    if (email === "") {
       setError((prev) => {
         return { ...prev, email: "email is required" };
       });
